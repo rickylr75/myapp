@@ -1,0 +1,20 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{secrets.SSH_HOST}}
+          port: 2222
+          username: ${{secrets.SSH_USER}}
+          key: ${{secrets.PRIVATE_KEY}}
+          script: "set -eu; cd /var/www/html/reddit_2324; git pull --ff-only origin main; npm ci; npm run build;"
